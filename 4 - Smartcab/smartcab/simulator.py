@@ -34,6 +34,7 @@ class Simulator(object):
         self.start_time = None
         self.current_time = 0.0
         self.last_updated = 0.0
+        self.successful_runs = 0
         self.update_delay = update_delay  # duration between each step (in secs)
 
         self.display = display
@@ -61,6 +62,7 @@ class Simulator(object):
 
     def run(self, n_trials=1):
         self.quit = False
+        self.successful_runs = 0
         for trial in xrange(n_trials):
             print "Simulator.run(): Trial {}".format(trial)  # [debug]
             self.env.reset()
@@ -100,6 +102,8 @@ class Simulator(object):
                     self.quit = True
                 finally:
                     if self.quit or self.env.done:
+                        if self.env.done and self.env.successful:
+                            self.successful_runs += 1
                         break
 
             if self.quit:

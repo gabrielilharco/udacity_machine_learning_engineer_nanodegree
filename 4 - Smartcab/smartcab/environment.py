@@ -39,6 +39,7 @@ class Environment(object):
         self.t = 0
         self.agent_states = OrderedDict()
         self.status_text = ""
+        self.successful = False
 
         # Road network
         self.grid_size = (8, 6)  # (cols, rows)
@@ -122,9 +123,11 @@ class Environment(object):
             agent_deadline = self.agent_states[self.primary_agent]['deadline']
             if agent_deadline <= self.hard_time_limit:
                 self.done = True
+                self.successful = False
                 print "Environment.step(): Primary agent hit hard time limit ({})! Trial aborted.".format(self.hard_time_limit)
             elif self.enforce_deadline and agent_deadline <= 0:
                 self.done = True
+                self.successful = False
                 print "Environment.step(): Primary agent ran out of time! Trial aborted."
             self.agent_states[self.primary_agent]['deadline'] = agent_deadline - 1
 
@@ -210,6 +213,7 @@ class Environment(object):
                 if state['deadline'] >= 0:
                     reward += 10  # bonus
                 self.done = True
+                self.successful = True
                 print "Environment.act(): Primary agent has reached destination!"  # [debug]
             self.status_text = "state: {}\naction: {}\nreward: {}".format(agent.get_state(), action, reward)
             #print "Environment.act() [POST]: location: {}, heading: {}, action: {}, reward: {}".format(location, heading, action, reward)  # [debug]
